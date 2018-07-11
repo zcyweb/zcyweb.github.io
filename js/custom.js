@@ -7,7 +7,7 @@ Theme by: WebThemez.com
 Note: donate to remove backlink form the site
 */
 $( function() {
-        var endDate = "July  12, 2018 00:20:00";
+        var endDate = "July  12, 2018 02:30:00";
 
         $('.countdown.simple').countdown({ date: endDate });
 
