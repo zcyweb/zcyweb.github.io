@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>达州市耀华中学抽奖系统</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-layer" id="backgroundLayer"></div>
+  <div class="background-mask"></div>
+
+  <div class="app-shell">
+    <header class="topbar glass-card">
+      <div class="brand">
+        <button class="logo-button" id="logoButton" type="button" aria-label="点击 Logo 进入后台">
+          <img id="mainLogo" src="assets/logo/logo.png" alt="活动 Logo">
+        </button>
+        <div class="title-group">
+          <p class="eyebrow">达州市耀华中学</p>
+          <h1 id="activityTitle">幸运抽奖活动</h1>
+          <p id="activitySubtitle">开始你的幸运抽奖吧</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="status-chip" id="modeChip">数量模式</div>
+        <div class="status-chip" id="soundChip">音效开启</div>
+        <button class="icon-button" id="fullscreenButton" type="button">全屏</button>
+      </div>
+    </header>
+
+    <main class="main-layout">
+      <section class="stage-panel glass-card">
+        <div class="stage-header">
+          <div>
+            <p class="section-label">抽奖舞台</p>
+            <h2>专业大屏展示</h2>
+          </div>
+          <div class="live-badge">
+            <span class="live-dot"></span>
+            <span>LIVE</span>
+          </div>
+        </div>
+
+        <div class="draw-stage" id="drawStage">
+          <div class="glow-ring glow-ring-1"></div>
+          <div class="glow-ring glow-ring-2"></div>
+
+          <div class="draw-visual">
+            <div class="bubble-stage">
+              <div class="bubble-field" id="prizeBubbleField"></div>
+              <div class="focus-bubble-shell">
+                <div class="draw-image-shell focus-bubble">
+                  <img id="drawImage" src="assets/prizes/1.jpg" alt="当前抽奖奖品">
+                </div>
+              </div>
+            </div>
+            <div class="draw-copy">
+              <p class="draw-caption">即将揭晓</p>
+              <div class="marquee-shell">
+                <div class="marquee-track" id="drawNameTrack">
+                  <span id="drawPrizeName">一等奖</span>
+                </div>
+              </div>
+              <p class="draw-description" id="drawDescription">点击下方按钮，开始本轮抽奖。</p>
+            </div>
+          </div>
+
+          <div class="draw-actions">
+            <button class="primary-button" id="startDrawButton" type="button">
+              <span class="button-glow"></span>
+              <span>开始抽奖</span>
+            </button>
+            <button class="secondary-button" id="openAdminButton" type="button">后台管理</button>
+          </div>
+        </div>
+
+        <div class="quick-stats">
+          <article class="stat-card">
+            <p>奖项总数</p>
+            <h3 id="totalPrizeCount">0</h3>
+          </article>
+          <article class="stat-card">
+            <p>人员数量</p>
+            <h3 id="participantCount">0</h3>
+          </article>
+          <article class="stat-card">
+            <p>中奖记录</p>
+            <h3 id="recordCount">0</h3>
+          </article>
+        </div>
+      </section>
+
+      <aside class="sidebar-panel">
+        <section class="glass-card panel-card">
+          <div class="panel-header">
+            <div>
+              <p class="section-label">奖品总览</p>
+              <h2>奖项展示</h2>
+            </div>
+            <p class="panel-tip">图片可在后台替换</p>
+          </div>
+          <div class="prize-grid" id="prizeGrid"></div>
+        </section>
+
+        <section class="glass-card panel-card">
+          <div class="panel-header">
+            <div>
+              <p class="section-label">最近结果</p>
+              <h2>中奖信息</h2>
+            </div>
+          </div>
+          <div class="recent-records" id="recentRecords"></div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <div class="modal-overlay hidden" id="resultModal">
+    <div class="modal-card result-card">
+      <button class="modal-close" id="closeResultModal" type="button">关闭</button>
+      <div class="confetti-layer" id="confettiLayer"></div>
+      <p class="section-label">抽奖结果</p>
+      <h2 id="resultPrizeName">一等奖</h2>
+      <div class="result-image-shell">
+        <img id="resultPrizeImage" src="assets/prizes/1.jpg" alt="中奖奖品">
+      </div>
+      <div class="winner-info">
+        <p id="resultParticipantText">中奖人：张三（001）</p>
+        <p id="resultTimeText">时间：2026-01-01 10:00:00</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="adminModal">
+    <div class="modal-card admin-card">
+      <div class="admin-header">
+        <div>
+          <p class="section-label">后台管理</p>
+          <h2>系统设置中心</h2>
+        </div>
+        <button class="modal-close" id="closeAdminModal" type="button">关闭</button>
+      </div>
+
+      <section class="admin-lock" id="adminLockSection">
+        <p>请输入后台密码</p>
+        <div class="admin-lock-row">
+          <input id="adminPasswordInput" type="password" placeholder="默认密码：yaohua2001">
+          <button class="primary-button compact" id="unlockAdminButton" type="button">进入后台</button>
+        </div>
+      </section>
+
+      <section class="admin-content hidden" id="adminContent">
+        <nav class="admin-tabs">
+          <button class="tab-button active" data-tab="settings" type="button">活动设置</button>
+          <button class="tab-button" data-tab="prizes" type="button">奖项管理</button>
+          <button class="tab-button" data-tab="participants" type="button">人员名单</button>
+          <button class="tab-button" data-tab="images" type="button">图片管理</button>
+          <button class="tab-button" data-tab="control" type="button">高级控制</button>
+          <button class="tab-button" data-tab="records" type="button">中奖记录</button>
+        </nav>
+
+        <div class="admin-panels">
+          <section class="admin-panel active" data-panel="settings">
+            <div class="form-grid">
+              <label class="field">
+                <span>活动标题</span>
+                <input id="settingTitle" type="text" placeholder="请输入活动标题">
+              </label>
+              <label class="field">
+                <span>活动副标题</span>
+                <input id="settingSubtitle" type="text" placeholder="请输入活动副标题">
+              </label>
+              <label class="field">
+                <span>抽奖模式</span>
+                <select id="settingMode">
+                  <option value="quantity">数量模式</option>
+                  <option value="probability">概率模式</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>后台密码</span>
+                <input id="settingPassword" type="text" placeholder="请输入后台密码">
+              </label>
+              <label class="field">
+                <span>Logo 上传</span>
+                <input id="settingLogo" type="file" accept="image/*">
+              </label>
+              <label class="field">
+                <span>背景图片</span>
+                <input id="settingBackground" type="file" accept="image/*">
+              </label>
+            </div>
+
+            <div class="toggle-row">
+              <label class="toggle-field">
+                <input id="settingSoundEnabled" type="checkbox">
+                <span>默认开启音效</span>
+              </label>
+              <label class="toggle-field">
+                <input id="settingNoRepeatWinners" type="checkbox">
+                <span>人员默认不重复中奖</span>
+              </label>
+            </div>
+
+            <div class="button-row">
+              <button class="primary-button compact" id="saveSettingsButton" type="button">保存活动设置</button>
+              <button class="secondary-button compact" id="resetBackgroundButton" type="button">恢复默认背景</button>
+            </div>
+          </section>
+
+          <section class="admin-panel" data-panel="prizes">
+            <div class="panel-toolbar">
+              <p>支持新增、删除、排序、上传图片和切换数量 / 概率配置。</p>
+              <button class="primary-button compact" id="addPrizeButton" type="button">新增奖项</button>
+            </div>
+            <div class="probability-summary" id="probabilitySummary">当前概率总和：0%</div>
+            <div class="prize-editor-list" id="prizeEditorList"></div>
+          </section>
+
+          <section class="admin-panel" data-panel="participants">
+            <div class="panel-toolbar">
+              <p>支持导入 CSV，也支持手动粘贴名单。</p>
+            </div>
+            <div class="form-grid">
+              <label class="field">
+                <span>导入 CSV</span>
+                <input id="participantFileInput" type="file" accept=".csv,text/csv">
+              </label>
+              <label class="field field-textarea">
+                <span>手动粘贴名单</span>
+                <textarea id="participantTextarea" placeholder="格式示例：&#10;001,张三&#10;002,李四"></textarea>
+              </label>
+            </div>
+            <div class="button-row">
+              <button class="primary-button compact" id="importParticipantsButton" type="button">导入名单</button>
+              <button class="secondary-button compact" id="clearParticipantsButton" type="button">清空名单</button>
+            </div>
+            <div class="data-table" id="participantTable"></div>
+          </section>
+
+          <section class="admin-panel" data-panel="images">
+            <div class="panel-toolbar">
+              <p>上传、替换或删除奖品图片。也可直接替换 assets/prizes/ 目录下的文件。</p>
+            </div>
+            <div class="image-manager" id="imageManager"></div>
+          </section>
+
+          <section class="admin-panel" data-panel="control">
+            <div class="control-section">
+              <h3 class="control-section-title">指定中奖</h3>
+              <div class="form-grid">
+                <label class="field">
+                  <span>指定下一次中奖奖项</span>
+                  <select id="nextPrizeSelect"></select>
+                </label>
+                <label class="field">
+                  <span>指定下一次中奖人员</span>
+                  <select id="nextParticipantSelect"></select>
+                </label>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button class="primary-button compact" id="saveControlButton" type="button">保存高级控制</button>
+              <button class="secondary-button compact" id="clearControlButton" type="button">清除指定设置</button>
+            </div>
+            <div class="control-summary" id="controlSummary"></div>
+          </section>
+
+          <section class="admin-panel" data-panel="records">
+            <div class="panel-toolbar">
+              <p>中奖记录会自动保存在本地。</p>
+            </div>
+            <div class="button-row">
+              <button class="primary-button compact" id="exportRecordsButton" type="button">导出 CSV</button>
+              <button class="secondary-button compact" id="clearRecordsButton" type="button">清空记录</button>
+            </div>
+            <div class="data-table" id="recordTable"></div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
