@@ -302,7 +302,7 @@
   }
 
   function renderSettings() {
-    document.title = `${state.settings.title} - LuckyDraw Pro`;
+    document.title = `${state.settings.title} - 达州耀华`;
     els.mainLogo.src = state.settings.logo || DEFAULT_LOGO;
     els.activityTitle.textContent = state.settings.title;
     els.activitySubtitle.textContent = state.settings.subtitle;
