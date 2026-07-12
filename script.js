@@ -599,7 +599,7 @@
     const card = input.closest(".image-card");
     if (!card) return;
 
-    const dataUrl = await compressImage(input.files[0],100);
+    const dataUrl = await readFileAsDataUrl(input.files[0]);
     const action = input.dataset.action;
 
     if (action === "upload-logo") {
@@ -755,8 +755,8 @@
   }
 
   async function saveSettings() {
-    const nextLogo = els.settingLogo.files[0] ? await compressImage(els.settingLogo.files[0],100) : state.settings.logo;
-    const nextBackground = els.settingBackground.files[0] ? await compressImage(els.settingBackground.files[0],100) : 	state.settings.background;
+    const nextLogo = els.settingLogo.files[0] ? await readFileAsDataUrl(els.settingLogo.files[0]) : state.settings.logo;
+    const nextBackground = els.settingBackground.files[0] ? await readFileAsDataUrl(els.settingBackground.files[0]) : state.settings.background;
 
     state.settings.title = cleanText(els.settingTitle.value, DEFAULT_STATE.settings.title);
     state.settings.subtitle = cleanText(els.settingSubtitle.value, DEFAULT_STATE.settings.subtitle);
@@ -842,7 +842,7 @@
     const prize = state.prizes.find((item) => item.id === card.dataset.id);
     if (!prize) return;
 
-    prize.image = await compressImage(event.target.files[0],100);
+    prize.image = await readFileAsDataUrl(event.target.files[0]);
     saveState();
     renderAll();
     showToast("奖品图片已更新。");
@@ -1366,104 +1366,6 @@
       reader.readAsDataURL(file);
     });
   }
-
-async function compressImage(file, maxSizeKB = 100) {
-  return new Promise((resolve, reject) => {
-
-    const img = new Image();
-    const reader = new FileReader();
-
-    reader.onload = e => {
-      img.src = e.target.result;
-    };
-
-    img.onload = async () => {
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-
-      // 最大宽高
-      const maxWidth = 1200;
-      const maxHeight = 1200;
-
-
-      let width = img.width;
-      let height = img.height;
-
-
-      if(width > maxWidth){
-        height = height * (maxWidth / width);
-        width = maxWidth;
-      }
-
-
-      if(height > maxHeight){
-        width = width * (maxHeight / height);
-        height = maxHeight;
-      }
-
-
-      canvas.width = width;
-      canvas.height = height;
-
-
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        width,
-        height
-      );
-
-
-      let quality = 0.8;
-      let dataUrl;
-
-
-      while(true){
-
-        dataUrl = canvas.toDataURL(
-          "image/jpeg",
-          quality
-        );
-
-
-        // Base64大小计算
-        const sizeKB =
-          Math.round(
-            (dataUrl.length * 3) / 4 / 1024
-          );
-
-
-        if(sizeKB <= maxSizeKB || quality <= 0.2){
-          break;
-        }
-
-
-        quality -= 0.05;
-      }
-
-
-      console.log(
-        "压缩后:",
-        Math.round(dataUrl.length*3/4/1024),
-        "KB"
-      );
-
-
-      resolve(dataUrl);
-    };
-
-
-    img.onerror = reject;
-
-    reader.onerror = reject;
-
-    reader.readAsDataURL(file);
-
-  });
-}
 
   async function readFileAsText(file) {
     return new Promise((resolve, reject) => {
